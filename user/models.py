@@ -1,15 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 # Create your models here.
 # User Manager
 class UserManager(BaseUserManager):
-    def create_user(self, validate_data):
-        email = validate_data['email']
-        password = validate_data['password1']
-        nickname = validate_data['nickname']
+    def create_user(self, email, nickname, password=None):
+        # create_user(self, validate_data)
+        # email = validate_data['email']
+        # password = validate_data['password1']
+        # nickname = validate_data['nickname']
 
         if not email:
             raise ValueError('이메일은 필수 항목입니다.')
@@ -18,23 +18,21 @@ class UserManager(BaseUserManager):
         if not nickname:
             raise ValueError('닉네임은 필수 항목 입니다.')
 
-
         user = self.model(
-            email=self.normalize_email(email),
-            # 중복 방지 (정규화 문제)
-            nickname=nickname
+            email=UserManager.normalize_email(email),
+            nickname=nickname,
         )
         user.set_password(password)
         user.full_clean()
-        user.save()
+        user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, email, nickname=None, password=None):
+    def create_superuser(self, email, password, nickname, **extra_fields):
 
         user = self.model(
             email=email,
-            nickname=nickname
+            nickname=nickname,
         )
         user.set_password(password)
         user.full_clean()
@@ -42,13 +40,14 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.is_superuser = True
 
-        user.save()
+        user.save(using=self._db)
 
         return user
 
 
 # User Model
 class User(AbstractBaseUser):
+    id = models.AutoField(primary_key=True)
     email = models.EmailField('이메일', unique=True, max_length=100)
     nickname = models.CharField('닉네임', max_length=100, unique=True)
 
@@ -63,6 +62,12 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+    def get_full_name(self):
+        return self.email
+
+    def get_short_name(self):
+        return self.nickname
 
     @property
     def is_staff(self):
