@@ -13,7 +13,6 @@ User = get_user_model()
 
 
 # Create your views here.
-
 # 로그인 뷰
 class LoginApi(APIView):
     def post(self, request, *args, **kwargs):
