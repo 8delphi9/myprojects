@@ -57,6 +57,11 @@ class RegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 _('email field not allowed empty')
             )
+        get_email = User.objects.filter(email__iexact=email)
+        if get_email.count() > 0:
+            raise serializers.ValidationError(
+                _('email is already registered')
+            )
         return email
 
     def validate_nickname(self, nickname):
