@@ -5,7 +5,10 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 
-from user.views import UserCreateApi
+from user.views import (
+    UserCreateApi,
+    LoginApi,
+)
 
 # 토큰
 token_patterns = [
@@ -17,6 +20,7 @@ token_patterns = [
 
 urlpatterns = [
     path('register/', UserCreateApi.as_view()),
+    path('login/', LoginApi.as_view()),
 
     # 토큰 url
     path('token/', include(token_patterns))
