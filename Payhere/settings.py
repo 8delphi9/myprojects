@@ -61,7 +61,6 @@ INSTALLED_APPS += [
     'ledger',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_black_blacklist',
 ]
 
 # rest framework authentication
@@ -70,7 +69,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAuthenticated',
     # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'auth.authenticate.CustomJWTAuthentication',
+        'user.authenticate.CustomJWTAuthentication',
     ),
 }
 

@@ -18,7 +18,7 @@ class CustomJWTAuthentication(BaseAuthentication):
 
         try:
             prefix = authorization_header.split(' ')[0]
-            if prefix.lower() is not 'jwt':
+            if prefix.lower() != 'jwt':
                 raise exceptions.AuthenticationFailed('Token is not jwt')
 
             access_token = authorization_header.split(' ')[1]
