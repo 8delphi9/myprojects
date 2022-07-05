@@ -1,15 +1,12 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 # Create your models here.
 # User Manager
 class UserManager(BaseUserManager):
+    @transaction.atomic
     def create_user(self, email, nickname, password=None):
-        # create_user(self, validate_data)
-        # email = validate_data['email']
-        # password = validate_data['password1']
-        # nickname = validate_data['nickname']
 
         if not email:
             raise ValueError('이메일은 필수 항목입니다.')
