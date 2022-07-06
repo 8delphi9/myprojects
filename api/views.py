@@ -39,4 +39,11 @@ class DetailAPIView(APIView):
         serializer = LedgerDetailSerializer(record)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class DeletedRecordListView(APIView):
+    def get(self, request):
+        records = Record.deleted_objects.all()
+        serializer = RecordSummarySerializer(records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        
 
