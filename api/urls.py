@@ -3,6 +3,10 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
+from user.views import (
+    UserApiView,
+    UserCreateApiView,
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -18,9 +22,9 @@ from user.urls import (
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='Swagger Payhere',
+        title='Payhere',
         default_version='api',
-        description='LabQ API',
+        description='Payhere Swagger',
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(name="test", email="test@test.com"),
         license=openapi.License(name="Test License"),
@@ -39,6 +43,8 @@ token_patterns = [
 ]
 
 user_patterns = [
+    path('signup/', UserCreateApiView.as_view(), name='signup'),
+    path('signup/UD/', UserApiView.as_view()),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
 ]

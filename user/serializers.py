@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
@@ -88,7 +90,7 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create_user(
             email=validate_data["email"],
             password=validate_data["password1"],
-            nickname=validate_data["nickname"]
+            nickname=validate_data["nickname"],
         )
         return user
 

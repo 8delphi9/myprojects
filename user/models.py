@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 # User Manager
 class UserManager(BaseUserManager):
-    def create_user(self, email, nickname, password):
+    def create_user(self, email, nickname, password, **extra_fields):
 
         if not email:
             raise ValueError('이메일은 필수 항목입니다.')
@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
     email = models.EmailField('이메일', unique=True, max_length=100)
     nickname = models.CharField('닉네임', max_length=100, unique=True)
 
+    last_login = models.DateTimeField(blank=True, null=True)
     is_admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
@@ -65,7 +66,6 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         return self.nickname
 
-    @property
     def is_staff(self):
         return self.is_admin
 
