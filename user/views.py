@@ -5,7 +5,7 @@ from rest_framework import generics
 from django.db import transaction
 from django.contrib.auth import get_user_model
 
-from user.serializers import RegisterSerializer
+from user.serializers import RegisterSerializer, UserSerializer
 from user.authenticate import jwt_login
 
 
@@ -37,3 +37,68 @@ class LoginApi(APIView):
 
         response = Response(status=status.HTTP_200_OK)
         return jwt_login(response, user)
+
+
+class UserCreateApi(APIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request, **kwargs):
+        """
+        author: 정용수
+        회원가입: 이메일, 패스워드, 닉네임
+        :param request: QueryDict
+        :return: JSON
+        """
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({
+                "message": "회원 가입이 완료되었습니다."
+            }, status=status.HTTP_200_OK)
+        return Response({
+            "message": "이메일 또는 패스워드 또는 닉네임 형식을 확인해주세요."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserApi(APIView):
+    def put(self, request):
+        """
+         author: 정용수
+        회원정보 변경: 이메일로 회원 정보를 찾아 nickname을 변경함
+        :param request: QueryDict
+        :return: JSON
+        """
+        try:
+            user = User.objects.get(email=request.data.get('email'))
+
+            update_user_serializer = UserSerializer(user, data=request.data)
+
+            if update_user_serializer.is_valid(raise_exception=True):
+                update_user_serializer.save()
+
+            return Response({
+                "message": "회원 정보가 변경되었습니다."
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "message": "해당 하는 회원 정보가 없습니다."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        """
+        회원탈퇴: 이메일로 회원 탈퇴를 진행함
+        :param request: QueryDict
+        :return: JSON
+        """
+        try:
+            user = User.objects.get(email=request.data.get('email'))
+            user.delete()
+
+            return Response({
+                "message": "회원 탈퇴가 완료되었습니다."
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "message": "해당 하는 회원 정보가 없습니다."
+            }, status=status.HTTP_400_BAD_REQUEST)
