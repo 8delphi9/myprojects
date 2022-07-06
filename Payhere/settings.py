@@ -61,6 +61,7 @@ INSTALLED_APPS += [
     'ledger',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_yasg',
 ]
 
 # rest framework authentication
@@ -75,13 +76,13 @@ REST_FRAMEWORK = {
 
 REST_USE_JWT = True
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'TOKEN_USER_CLASS': 'user.User',
-}
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+#     'ROTATE_REFRESH_TOKENS': False,
+#     'BLACKLIST_AFTER_ROTATION': True,
+#     'TOKEN_USER_CLASS': 'user.User',
+# }
 
 
 MIDDLEWARE = [
