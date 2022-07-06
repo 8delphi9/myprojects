@@ -29,7 +29,7 @@ class  SoftDeleteModel(models.Model):
     
     def restore(self):
         self.is_deleted=False
-        self.save(updated_fields=['is_deleted'])
+        self.save(update_fields=['is_deleted'])
 
 
 class Record(SoftDeleteModel):

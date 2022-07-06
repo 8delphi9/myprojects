@@ -7,4 +7,5 @@ urlpatterns = [
     path('ledgers/', RecordListView.as_view()),
     path('ledgers/<int:pk>/', DetailAPIView.as_view()),
     path('bin/', DeletedRecordListView.as_view()),
+    path('bin/<int:pk>/', DeletedRecordDetailView.as_view()),
 ]
