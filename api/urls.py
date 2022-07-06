@@ -19,7 +19,6 @@ from user.urls import (
     user_detail
 )
 
-
 schema_view = get_schema_view(
     openapi.Info(
         title='Payhere',
@@ -32,8 +31,6 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,)
 )
-
-
 
 # 토큰
 token_patterns = [
