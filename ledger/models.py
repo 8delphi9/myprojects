@@ -2,7 +2,37 @@ from django.db import models
 
 # Create your models here.
 
-class Record(models.Model):
+class SoftDeleteManager(models.Manager):
+    use_for_related_fields = True
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
+class DeletedRecordManager(models.Manager):
+    use_for_related_fields = True
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=True)
+
+class  SoftDeleteModel(models.Model):
+    is_deleted = models.BooleanField(null=False, default=False)
+    
+    class Meta:
+        abstract = True
+    
+    deleted_objects = DeletedRecordManager()
+    objects = SoftDeleteManager()
+        
+    def delete(self, using=None, keep_parents=False):
+        self.is_deleted=True
+        self.save(update_fields=['is_deleted'])
+    
+    def restore(self):
+        self.is_deleted=False
+        self.save(updated_fields=['is_deleted'])
+
+
+class Record(SoftDeleteModel, models.Model):
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     amount = models.IntegerField(null=False, default=0)

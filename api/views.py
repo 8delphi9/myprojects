@@ -26,4 +26,24 @@ class DetailAPIView(APIView):
         record=get_object_or_404(Record, id=pk)
         serializer=LedgerDetailSerializer(record)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def patch(self, request, pk):
+        record = get_object_or_404(Record, id=pk)
+        serializer = LedgerDetailSerializer(record)
+        serializer.update(record, request.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def delete(self, request, pk):
+        record = get_object_or_404(Record, id=pk)
+        record.delete()
+        serializer = LedgerDetailSerializer(record)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class DeletedRecordListView(APIView):
+    def get(self, request):
+        records = Record.deleted_objects.all()
+        serializer = RecordSummarySerializer(records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        
 
