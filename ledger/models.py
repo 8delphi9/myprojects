@@ -20,8 +20,8 @@ class  SoftDeleteModel(models.Model):
     class Meta:
         abstract = True
     
-    deleted_objects = DeletedRecordManager()
     objects = SoftDeleteManager()
+    deleted_objects = DeletedRecordManager()
         
     def delete(self, using=None, keep_parents=False):
         self.is_deleted=True
@@ -32,7 +32,7 @@ class  SoftDeleteModel(models.Model):
         self.save(updated_fields=['is_deleted'])
 
 
-class Record(SoftDeleteModel, models.Model):
+class Record(SoftDeleteModel):
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     amount = models.IntegerField(null=False, default=0)
