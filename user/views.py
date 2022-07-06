@@ -84,3 +84,21 @@ class UserApi(APIView):
             return Response({
                 "message": "해당 하는 회원 정보가 없습니다."
             }, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        """
+        회원탈퇴: 이메일로 회원 탈퇴를 진행함
+        :param request: QueryDict
+        :return: JSON
+        """
+        try:
+            user = User.objects.get(email=request.data.get('email'))
+            user.delete()
+
+            return Response({
+                "message": "회원 탈퇴가 완료되었습니다."
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "message": "해당 하는 회원 정보가 없습니다."
+            }, status=status.HTTP_400_BAD_REQUEST)
