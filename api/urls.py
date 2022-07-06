@@ -3,8 +3,7 @@ from .views import *
 
 app_name = 'api'
 
-record_summary_list = RecordListView.as_view({'get': 'list'})
-
 urlpatterns = [
-    path('ledgers/', record_summary_list, name='record-list'),
+    path('ledgers/', RecordListView.as_view()),
+    path('ledgers/<int:pk>/', DetailAPIView.as_view()),
 ]
