@@ -1,45 +1,131 @@
-from rest_framework import serializers, status
-from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework import generics
-from django.db import transaction
-from django.contrib.auth import get_user_model
-
-from user.serializers import RegisterSerializer, UserSerializer
-from user.authenticate import jwt_login
-
+from django.contrib.auth import get_user_model, authenticate
+from rest_framework import mixins, viewsets
+from rest_framework.decorators import action
+from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from user.utils import get_user_login
+from user.serializers import (
+    UserSerializer,
+    LoginSerializer,
+    LogoutSerializer,
+    UserDetailSerializer,
+    UserUpdateSerializer,
+    RegisterSerializer,
+)
+from rest_framework.permissions import (
+    IsAdminUser,
+    AllowAny,
+    IsAuthenticated
+)
 
 User = get_user_model()
 
 
 # Create your views here.
-# 로그인 뷰
-class LoginApi(APIView):
-    def post(self, request, *args, **kwargs):
-        # serializer에서 구현하기
-        email = request.data.get('email')
-        password = request.data.get('password')
+class UserAPIView(mixins.ListModelMixin,
+                  viewsets.GenericViewSet):
+    """
+    - Login 기능
+    - User 조회 (어드민 전용)
+    """
 
-        if (email is None) or (password is None):
-            return Response({
-                "message": "email/password required"
-            }, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        if self.action == 'list':
+            return User.objects.all()
 
-        user = User.objects.filter(email=email).first()
-        if user is None:
-            return Response({
-                "message": "유저를 찾을 수 없습니다"
-            }, status=status.HTTP_404_NOT_FOUND)
-        if not user.check_password(password):
-            return Response({
-                "message": "wrong password"
-            }, status=status.HTTP_400_BAD_REQUEST)
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserSerializer
+        elif self.request.method == 'POST':
+            return LoginSerializer
 
-        response = Response(status=status.HTTP_200_OK)
-        return jwt_login(response, user)
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == 'list':
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods='post')
+    def login(self, request):
+        """
+        - 로그인
+        """
+        user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
+        if user is not None:
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            get_user_login(user)
+            res = Response(
+                {
+                    "email": request.data.get('email'),
+                    "message": "login success",
+                    "token": {
+                        "access": access_token,
+                        "refresh": refresh_token,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+            return res
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserCreateApi(APIView):
+class LogoutAPIView(viewsets.GenericViewSet):
+    """
+    - 로그아웃 기능 (인증된 유저 전용)
+    """
+    queryset = User.objects.all()
+    serializer_class = LogoutSerializer
+
+    @action(detail=False, methods='post')
+    def logout(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserDetailAPIView(mixins.RetrieveModelMixin,
+                        mixins.UpdateModelMixin,
+                        viewsets.GenericViewSet):
+    """
+    - 유저 디테일 (어드민 전용)
+    - 유저 업데이트 (어드민 전용)
+    - 업데이트 수정해야함.
+    """
+    lookup_url_kwarg = 'user_id'
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserDetailSerializer
+        else:
+            return UserUpdateSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+        if (self.action == 'retrieve') or (self.action == 'patch'):
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
+
+class UserCreateApiView(GenericAPIView):
     serializer_class = RegisterSerializer
 
     def post(self, request, **kwargs):
@@ -61,7 +147,7 @@ class UserCreateApi(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserApi(APIView):
+class UserApiView(APIView):
     def put(self, request):
         """
          author: 정용수

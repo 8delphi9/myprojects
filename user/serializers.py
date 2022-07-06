@@ -1,9 +1,9 @@
 import datetime
 
-import jwt
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 User = get_user_model()
@@ -90,12 +90,60 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create_user(
             email=validate_data["email"],
             password=validate_data["password1"],
-            nickname=validate_data["nickname"]
+            nickname=validate_data["nickname"],
         )
         return user
 
 
-# 로그인 시리얼라이저
+class LoginSerializer(serializers.Serializer):
+    """
+    로그인 시리얼라이저
+    """
+    email = serializers.EmailField(max_length=100, write_only=True)
+    password = serializers.CharField(write_only=True)
 
 
+class LogoutSerializer(serializers.Serializer):
+    """
+    로그아웃 시리얼라이저 (인증된 유저 전용)
+    """
+    refresh = serializers.CharField()
+
+    default_error_message = {
+        'bad_token': ('Token is expired or invalid',)
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+
+        try:
+            RefreshToken(self.token).blacklist()
+
+        except TokenError:
+            self.fail('bad_token')
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    유저 디테일 시리얼라이저 (어드민 전용)
+    """
+    class Meta:
+        model = User
+        fields = [
+            'id', 'email', 'nickname', 'is_admin'
+        ]
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    """
+    유저 업데이트 시리얼라이저 (어드민 전용)
+    """
+    class Meta:
+        model = User
+        fields = [
+            'id', 'nickname', 'is_admin'
+        ]
 
