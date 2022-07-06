@@ -1,12 +1,13 @@
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 # Create your models here.
 # User Manager
 class UserManager(BaseUserManager):
-    @transaction.atomic
-    def create_user(self, email, nickname, password=None):
+    def create_user(self, email, nickname, password):
 
         if not email:
             raise ValueError('이메일은 필수 항목입니다.')
@@ -22,8 +23,6 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.full_clean()
         user.save(using=self._db)
-
-        return user
 
     def create_superuser(self, email, password, nickname, **extra_fields):
 
@@ -44,7 +43,7 @@ class UserManager(BaseUserManager):
 
 # User Model
 class User(AbstractBaseUser):
-    id = models.AutoField(primary_key=True)
+    username = None
     email = models.EmailField('이메일', unique=True, max_length=100)
     nickname = models.CharField('닉네임', max_length=100, unique=True)
 
@@ -78,6 +77,7 @@ class User(AbstractBaseUser):
 
     class Meta:
         db_table = 'users'
+
 
 
 

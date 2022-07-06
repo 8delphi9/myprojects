@@ -16,7 +16,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -61,28 +60,27 @@ INSTALLED_APPS += [
     'ledger',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
 ]
 
 # rest framework authentication
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근 가능
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'user.authenticate.CustomJWTAuthentication',
+        # 'user.authenticate.CustomJWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
-REST_USE_JWT = True
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-#     'ROTATE_REFRESH_TOKENS': False,
-#     'BLACKLIST_AFTER_ROTATION': True,
-#     'TOKEN_USER_CLASS': 'user.User',
-# }
+# 추가적인 JWT_AUTH 설정
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 
 MIDDLEWARE = [
@@ -180,3 +178,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # email
 AUTH_USER_MODEL = 'user.User'
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS' :{
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}

@@ -1,19 +1,19 @@
 from django.urls import path, include, re_path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
-from user.views import (
-    LoginAPI, UserCreateApi
-)
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-login = LoginAPI.as_view({
-    'post': 'login'
-})
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+from user.urls import (
+    login,
+    logout,
+    users,
+    user_detail
+)
 
 
 schema_view = get_schema_view(
@@ -39,14 +39,22 @@ token_patterns = [
 ]
 
 user_patterns = [
-    path('login/', login),
-    path('register/', UserCreateApi.as_view())
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
+]
+
+admin_patterns = [
+    path('user/', users, name='user_list'),
+    path('user/<int:user_id>', user_detail, name='user_detail')
 ]
 
 
 urlpatterns = [
     # user
     path('user/', include(user_patterns)),
+
+    # admin
+    path('admin/', include(admin_patterns)),
 
     # 토큰 url
     path('token/', include(token_patterns)),

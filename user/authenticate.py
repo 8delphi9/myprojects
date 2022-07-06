@@ -1,5 +1,4 @@
 import datetime
-
 import jwt
 
 from Payhere.settings import SECRET_KEY
@@ -7,6 +6,7 @@ from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication, CSRFCheck
 from django.contrib.auth import get_user_model
 
+from user.utils import get_user_login
 
 User = get_user_model()
 
@@ -96,12 +96,16 @@ def jwt_login(response, user):
     refresh_token = get_refresh_token(user)
 
     data = {
-        'user_id': user.id,
+        'user': user,
         'access_token': access_token,
         'refresh_token': refresh_token
     }
 
+
+    get_user_login(user)
+
     response.data = data
     return response
+
 
 
