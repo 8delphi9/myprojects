@@ -13,10 +13,14 @@ from rest_framework.permissions import IsAuthenticated
 from ledger.serializers import (
     RecordSummarySerializer,
     LedgerDetailSerializer,
+    RecordModifySerializer,
 )
 from drf_yasg.utils import swagger_auto_schema
 from ledger.models import Record
-from ledger.ledger_api_params import record_post_params
+from ledger.ledger_api_params import (
+    record_post_params,
+    record_modify_params,
+)
 from user.models import User
 # Create your views here.
 
