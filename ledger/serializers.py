@@ -12,4 +12,3 @@ class LedgerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = ('id', 'date', 'in_ex', 'amount', 'method', 'memo')
-        
