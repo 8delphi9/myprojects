@@ -18,7 +18,8 @@ from user.urls import (
     login,
     logout,
     users,
-    user_detail
+    user_detail,
+    user_update,
 )
 
 schema_view = get_schema_view(
@@ -45,6 +46,7 @@ token_patterns = [
 
 user_patterns = [
     path('', UserApiView.as_view(), name='login'),
+    path('read/test/<int:user_id>/', user_update, name='user_read'),
     path('signup/', UserCreateApiView.as_view(), name='signup'),
     path('signup/UD/', UserApiView.as_view(), name='UDUser'),
     path('login/', login, name='login'),

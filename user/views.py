@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from user.permissions import IsOwner
 from user.tokens import MyTokenObtainPairSerializer
 from user.utils import get_user_login
 from user.serializers import (
@@ -126,6 +127,18 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+
+class UserReadAPIView(mixins.RetrieveModelMixin,
+                      viewsets.GenericViewSet):
+    lookup_url_kwarg = 'user_id'
+    permission_classes = [IsOwner]
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def get_serializer_class(self):
+        return UserUpdateDeleteSerializer
 
 
 class UserCreateApiView(GenericAPIView):
