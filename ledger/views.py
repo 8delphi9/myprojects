@@ -20,6 +20,7 @@ from ledger.ledger_api_params import (
     record_post_params,
     record_modify_params,
 )
+
 from user.models import User
 # Create your views here.
 
@@ -38,6 +39,7 @@ class RecordListView(APIView):
         record = Record.objects.create(user=user, **request.data)
         serializer = LedgerDetailSerializer(record)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class DetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -67,6 +69,7 @@ class DetailAPIView(APIView):
             serializer = LedgerDetailSerializer(record)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
     
 class DeletedRecordListView(APIView):
     permission_classes = [IsAuthenticated]
@@ -79,7 +82,7 @@ class DeletedRecordListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    
+
 class DeletedRecordDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -97,3 +100,4 @@ class DeletedRecordDetailView(APIView):
             serializer = LedgerDetailSerializer(record)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+

@@ -17,3 +17,4 @@ class RecordModifySerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = ('amount', 'memo')
+
