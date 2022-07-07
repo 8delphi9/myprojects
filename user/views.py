@@ -20,7 +20,6 @@ from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
 )
-from user.permissions import IsRecordUserOrUser
 
 User = get_user_model()
 
