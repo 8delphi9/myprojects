@@ -49,4 +49,3 @@ class Record(SoftDeleteModel):
     ]
     method = models.CharField(choices=METHOD_CHOICES, null=False, default=METHOD_CHOICES[0][0], max_length=20)
     memo = models.CharField(max_length=300, null=True, blank=True)
-    is_deleted = models.BooleanField(default=False, null=False)
