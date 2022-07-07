@@ -10,12 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-
 import environ
 import os
 
 from pathlib import Path
-
+from datetime import timedelta
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -60,7 +59,29 @@ INSTALLED_APPS += [
     'user',
     'ledger',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',
 ]
+
+# rest framework authentication
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근 가능
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'user.authenticate.CustomJWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+# 추가적인 JWT_AUTH 설정
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -154,3 +175,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# email
+AUTH_USER_MODEL = 'user.User'
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS' :{
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
