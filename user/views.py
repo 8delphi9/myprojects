@@ -26,7 +26,6 @@ User = get_user_model()
 
 
 # Create your views here.
-
 class UserAPIView(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
     """
@@ -190,5 +189,3 @@ class UserApiView(APIView):
             return Response({
                 "message": "해당 하는 회원 정보가 없습니다."
             }, status=status.HTTP_400_BAD_REQUEST)
-
-
