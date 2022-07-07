@@ -137,7 +137,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
+class UserUpdateDeleteSerializer(serializers.ModelSerializer):
     """
     유저 업데이트 시리얼라이저 (어드민 전용)
     """
