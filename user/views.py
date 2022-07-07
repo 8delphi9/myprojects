@@ -130,6 +130,7 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
 
 class UserCreateApiView(GenericAPIView):
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, **kwargs):
         """
@@ -150,9 +151,10 @@ class UserCreateApiView(GenericAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserApiView(APIView):
 
-    def put(self, request):
+class UserApiView(GenericAPIView):
+    def patch(self, request):
+
         """
          author: 정용수
         회원정보 변경: 이메일로 회원 정보를 찾아 nickname을 변경함

@@ -24,6 +24,8 @@ class UserManager(BaseUserManager):
         user.full_clean()
         user.save(using=self._db)
 
+        return user
+
     def create_superuser(self, email, password, nickname, **extra_fields):
 
         user = self.model(
