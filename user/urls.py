@@ -1,6 +1,8 @@
 from user.views import (
     UserDetailAPIView,
     UserAPIView,
+    LogoutAPIView,
+    UserReadAPIView,
 )
 
 users = UserAPIView.as_view({
@@ -11,11 +13,16 @@ login = UserAPIView.as_view({
     'post': 'login'
 })
 
-logout = UserDetailAPIView.as_view({
+logout = LogoutAPIView.as_view({
     'post': 'logout'
 })
 
 user_detail = UserDetailAPIView.as_view({
     'get': 'retrieve',
-    'patch': 'partial_update'
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
+
+user_update = UserReadAPIView.as_view({
+    'get': 'retrieve',
 })
