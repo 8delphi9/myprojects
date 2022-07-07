@@ -2,7 +2,13 @@ from django.urls import path, include, re_path
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-
+from .views import *
+from ledger.views import(
+    RecordListView,
+    DetailAPIView,
+    DeletedRecordListView,
+    DeletedRecordDetailView,
+)
 from user.token_views import MyTokenObtainPairView, ApiRefreshRefreshTokenView
 from user.views import (
     UserApiView,
@@ -58,8 +64,24 @@ admin_patterns = [
     path('user/<int:user_id>', user_detail, name='user_detail')
 ]
 
+ledger_patterns = [
+    path('', RecordListView.as_view()),
+    path('<int:pk>/', DetailAPIView.as_view()),
+]
+
+bin_patterns = [
+    path('', DeletedRecordListView.as_view()),
+    path('<int:pk>/', DeletedRecordDetailView.as_view()),
+]
+
 
 urlpatterns = [
+    #ledger
+    path('ledgers/', include(ledger_patterns)),
+    
+    #bin
+    path('bin/', include(bin_patterns)),
+    
     # user
     path('user/', include(user_patterns)),
 
