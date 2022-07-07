@@ -18,8 +18,9 @@ from user.serializers import (
 from rest_framework.permissions import (
     IsAdminUser,
     AllowAny,
-    IsAuthenticated
+    IsAuthenticated,
 )
+from user.permissions import IsRecordUserOrUser
 
 User = get_user_model()
 
@@ -115,10 +116,10 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
 
     def get_permissions(self):
         permission_classes = []
-        if (self.action == 'retrieve') or (self.action == 'patch'):
+        if self.action == 'retrieve':
             permission_classes = [IsAdminUser]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
