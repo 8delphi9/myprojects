@@ -40,6 +40,7 @@ token_patterns = [
 ]
 
 user_patterns = [
+    path('', UserApiView.as_view(), name='login'),
     path('signup/', UserCreateApiView.as_view(), name='signup'),
     path('signup/UD/', UserApiView.as_view()),
     path('login/', login, name='login'),
