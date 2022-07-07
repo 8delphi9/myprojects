@@ -6,19 +6,21 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from user.tokens import MyTokenObtainPairSerializer
 from user.utils import get_user_login
 from user.serializers import (
     UserSerializer,
     LoginSerializer,
     LogoutSerializer,
     UserDetailSerializer,
-    UserUpdateSerializer,
+    UserUpdateDeleteSerializer,
     RegisterSerializer,
 )
 from rest_framework.permissions import (
     IsAdminUser,
     AllowAny,
-    IsAuthenticated
+    IsAuthenticated,
 )
 
 User = get_user_model()
@@ -57,7 +59,7 @@ class UserAPIView(mixins.ListModelMixin,
         """
         user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
         if user is not None:
-            token = TokenObtainPairSerializer.get_token(user)
+            token = MyTokenObtainPairSerializer.get_token(user)
             refresh_token = str(token)
             access_token = str(token.access_token)
             get_user_login(user)
@@ -95,6 +97,7 @@ class LogoutAPIView(viewsets.GenericViewSet):
 
 class UserDetailAPIView(mixins.RetrieveModelMixin,
                         mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
     """
     - 유저 디테일 (어드민 전용)
@@ -110,14 +113,14 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
         if self.request.method == 'GET':
             return UserDetailSerializer
         else:
-            return UserUpdateSerializer
+            return UserUpdateDeleteSerializer
 
     def get_permissions(self):
         permission_classes = []
-        if (self.action == 'retrieve') or (self.action == 'patch'):
+        if self.action == 'retrieve':
             permission_classes = [IsAdminUser]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
@@ -148,8 +151,10 @@ class UserCreateApiView(GenericAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class UserApiView(GenericAPIView):
     def patch(self, request):
+
         """
          author: 정용수
         회원정보 변경: 이메일로 회원 정보를 찾아 nickname을 변경함
