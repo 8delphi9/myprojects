@@ -17,12 +17,14 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
+    TokenBlacklistView,
 )
 from user.urls import (
     login,
     logout,
     users,
-    user_detail
+    user_detail,
+    user_update,
 )
 
 schema_view = get_schema_view(
@@ -40,14 +42,18 @@ schema_view = get_schema_view(
 
 # 토큰
 token_patterns = [
-    path('', TokenObtainPairView.as_view()),
+    path('', MyTokenObtainPairView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
     path('verify/', TokenVerifyView.as_view()),
+    path('balcklist/', TokenBlacklistView.as_view()),
+    path('refresh/refresh_token', ApiRefreshRefreshTokenView.as_view())
 ]
 
 user_patterns = [
+    path('', UserApiView.as_view(), name='login'),
+    path('read/test/<int:user_id>/', user_update, name='user_read'),
     path('signup/', UserCreateApiView.as_view(), name='signup'),
-    path('signup/UD/', UserApiView.as_view()),
+    path('signup/UD/', UserApiView.as_view(), name='UDUser'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
 ]
