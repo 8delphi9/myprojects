@@ -9,6 +9,34 @@ from user.serializers import UserDetailSerializer
 
 # Create your tests here.
 class UserTest(APITestCase):
+    """
+    author : 이승민, 정용수
+    explanation :
+        - 회원가입 Test Case : 정용수
+            - 성공 케이스 :
+                -
+            실패 케이스 :
+                -
+        - 로그인 Test Case : 이승민
+            - 성공 케이스 2개 :
+                - 어드민 로그인
+                - 유저 로그인
+            - 실패 케이스 2개 :
+                - 어드민 로그인
+                - 유저 로그인
+        - 어드민전용 Test Case : 이승민
+            - 성공 케이스 4개 :
+                - 어드민 권한 유저 리스트 조회
+                - 어드민 권한 유저 디테일 조회
+                - 어드민 권한 유저 수정
+                - 어드민 권한 유저 삭제
+
+            - 실패 케이스 2개
+                - 인증되지 않은 사용자
+                - 유저가 없는 경우
+    """
+
+
     client = APIClient()
     headers = {}
 
@@ -216,8 +244,29 @@ class UserTest(APITestCase):
         response = self.client.get('/api/admin/user/', **self.headers, content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
-    def test_read_fail_admin(self):
+    def test_read_fail_admin1(self):
         self.client.credentials(HTTP_AUTHORIZATION='')
 
         response = self.client.get('/api/admin/user/', **self.headers, content_type='application/json')
         self.assertEqual(response.status_code, 401)
+
+    def test_detail_success_admin(self):
+        response = self.client.get(f'/api/admin/user/{self.admin.id}/', **self.headers, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail_fail_admin(self):
+        response = self.client.get(f'/api/admin/user/{0}/', **self.headers, content_type='application/json')
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_success_admin(self):
+        data = {
+            'nickname': 'test',
+            'is_admin': 1
+        }
+
+        response = self.client.patch(f'/api/admin/user/{self.admin.id}/', json.dumps(data), **self.headers, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_success_admin(self):
+        response = self.client.delete(f'/api/admin/user/{self.admin.id}/', **self.headers, content_type='application/json')
+        self.assertEqual(response.status_code, 204)
