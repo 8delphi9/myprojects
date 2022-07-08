@@ -28,8 +28,8 @@ User = get_user_model()
 
 
 # Create your views here.
-class UserAPIView(mixins.ListModelMixin,
-                  viewsets.GenericViewSet):
+class UserLoginAPIView(mixins.ListModelMixin,
+                       viewsets.GenericViewSet):
     """
     author : 이승민
     로그인 : email, password, list (get)
@@ -41,6 +41,7 @@ class UserAPIView(mixins.ListModelMixin,
                          올바르다면 access, refresh 토큰을 발급한다.
                          이때 토큰에는 유저의 id와 email이랑 is_staff 필드를 payload에 같이 삽입 후 엔코딩한다.
     """
+
 
     def get_queryset(self):
         if self.action == 'list':

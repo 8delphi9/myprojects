@@ -61,7 +61,7 @@ user_patterns = [
 
 admin_patterns = [
     path('user/', users, name='user_list'),
-    path('user/<int:user_id>', user_detail, name='user_detail')
+    path('user/<int:user_id>/', user_detail, name='user_detail')
 ]
 
 ledger_patterns = [

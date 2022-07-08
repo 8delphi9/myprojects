@@ -1,15 +1,15 @@
 from user.views import (
     UserDetailAPIView,
-    UserAPIView,
+    UserLoginAPIView,
     LogoutAPIView,
     UserReadAPIView,
 )
 
-users = UserAPIView.as_view({
+users = UserLoginAPIView.as_view({
     'get': 'list'
 })
 
-login = UserAPIView.as_view({
+login = UserLoginAPIView.as_view({
     'post': 'login'
 })
 
