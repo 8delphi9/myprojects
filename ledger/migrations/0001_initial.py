@@ -15,19 +15,47 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Record',
+            name="Record",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField()),
-                ('amount', models.IntegerField(default=0)),
-                ('in_ex', models.CharField(choices=[('income', '수입'), ('expense', '지출')], default='income', max_length=20)),
-                ('method', models.CharField(choices=[('cash', '현금'), ('card', '카드'), ('transfer', '이체')], default='cash', max_length=20)),
-                ('memo', models.CharField(blank=True, max_length=300, null=True)),
-                ('is_deleted', models.BooleanField(default=False)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField()),
+                ("amount", models.IntegerField(default=0)),
+                (
+                    "in_ex",
+                    models.CharField(
+                        choices=[("income", "수입"), ("expense", "지출")],
+                        default="income",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "method",
+                    models.CharField(
+                        choices=[("cash", "현금"), ("card", "카드"), ("transfer", "이체")],
+                        default="cash",
+                        max_length=20,
+                    ),
+                ),
+                ("memo", models.CharField(blank=True, max_length=300, null=True)),
+                ("is_deleted", models.BooleanField(default=False)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

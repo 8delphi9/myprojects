@@ -41,7 +41,7 @@ class RecordListView(APIView):
         """
         author : 전재완
         co-author : 임혁
-        param : 
+        param :
         return : 200 response
         explanation : 가계부 요약 정보 리스트 조회
         """
@@ -49,10 +49,8 @@ class RecordListView(APIView):
         if user:
             records = Record.objects.all().filter(user=user)
             serializer = RecordSummarySerializer(records, many=True)
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
     @swagger_auto_schema(request_body=record_post_params)
     def post(self, request):
@@ -61,7 +59,7 @@ class RecordListView(APIView):
         co-author : 임혁
         param : request
         return : 200 response
-        explanation : request 데이터로 새로운 가계부 생성 
+        explanation : request 데이터로 새로운 가계부 생성
         """
         user = User.objects.get(id=request.user.id)
         if user:

@@ -25,23 +25,29 @@ class ApiRefreshRefreshTokenView(GenericAPIView):
 
     # 리프레시 토큰 자체를 다시 발급
     def post(self, request: HttpRequest):
-        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(data=request.data)
+        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(
+            data=request.data
+        )
 
         serializer.is_valid(raise_exception=True)
 
-        refresh: str = serializer.validated_data['refresh']
+        refresh: str = serializer.validated_data["refresh"]
 
         try:
             refresh_token: RefreshToken = RefreshToken(refresh)
         except TokenError as e:
             raise InvalidToken(e)
 
-        user: User = get_object_or_404(User, id=refresh_token['user_id'])
-        new_refresh_token = MyTokenObtainPairSerializer.get_token(user)  # 이걸로 토큰을 생성해야 합니다. 다른 방법으로 하면 페이로드에 필수데이터가 누락된 버전이 생김
+        user: User = get_object_or_404(User, id=refresh_token["user_id"])
+        new_refresh_token = MyTokenObtainPairSerializer.get_token(
+            user
+        )  # 이걸로 토큰을 생성해야 합니다. 다른 방법으로 하면 페이로드에 필수데이터가 누락된 버전이 생김
         new_access_token = new_refresh_token.access_token
         refresh_token.blacklist()  # 꼭 블랙리스트에 넣어주세요.
 
-        return Response({
-            'refresh': str(new_refresh_token),
-            'access': str(new_access_token),
-        })
+        return Response(
+            {
+                "refresh": str(new_refresh_token),
+                "access": str(new_access_token),
+            }
+        )

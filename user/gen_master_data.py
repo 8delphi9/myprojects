@@ -9,9 +9,7 @@ User = get_user_model()
 def gen_master(apps, schema_editor):
     # 슈퍼 유저 생성
     User.objects.create_superuser(
-        email='admin@email.com',
-        nickname='admin',
-        password='password'
+        email="admin@email.com", nickname="admin", password="password"
     )
 
     # 일반 유저 생성
@@ -20,8 +18,4 @@ def gen_master(apps, schema_editor):
         nickname = f"user{id}"
         password = "password"
 
-        User.objects.create_user(
-            email=email,
-            nickname=nickname,
-            password=password
-        )
+        User.objects.create_user(email=email, nickname=nickname, password=password)
