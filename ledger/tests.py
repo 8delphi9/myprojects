@@ -26,7 +26,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             "user": 1,
             "date": "2022-07-06",
             "amount": 300000,
-            "in_ix": "income",
+            "in_ex": "income",
             "method": "cash",
             "memo": "this  is test"
         }
