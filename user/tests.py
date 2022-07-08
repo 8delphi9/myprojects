@@ -1,8 +1,10 @@
 import json
 
+from django.contrib.auth import authenticate
 from django.test import TestCase
 from rest_framework.test import APITestCase, APIClient
 from user.models import User
+from user.serializers import UserDetailSerializer
 
 
 # Create your tests here.
@@ -42,6 +44,38 @@ class UserTest(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token_access}')
 
+    ###### Test User Details ######
+    def test_success_user_details(self):
+        login_context = {
+            'email': 'test5@gmail.com',
+            'password': 'Testtest1@'
+        }
+        response = self.client.post(
+            f'/api/user/login/',
+            json.dumps(login_context),
+            content_type='application/json'
+        )
+
+        user = authenticate(email=login_context['email'], password=login_context['password'])
+        user_id = UserDetailSerializer(user).data['id']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["token"]["access"]}')
+
+        response = self.client.get(
+            f'/api/user/{user_id}/',
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_fail_user_details(self):
+        response = self.client.get(
+            f'/api/user/10/',
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+
     ###### Test User Update ######
     def test_success_user_update(self):
         login_context = {
@@ -54,21 +88,23 @@ class UserTest(APITestCase):
             content_type='application/json'
         )
 
+        user = authenticate(email=login_context['email'], password=login_context['password'])
+        user_id = UserDetailSerializer(user).data['id']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["token"]["access"]}')
 
         context = {
             'email': response.data['email'],
             'nickname': 'test55'
         }
+
         response = self.client.patch(
-            f'/api/user/4/',
+            f'/api/user/{user_id}/',
             json.dumps(context),
             content_type='application/json',
         )
 
         self.assertEqual(response.status_code, 200)
 
-    ###### Test User Update ######
     def test_fail_user_update(self):
         login_context = {
             'email': 'test5@gmail.com',
@@ -85,7 +121,7 @@ class UserTest(APITestCase):
             'nickname': 'test55'
         }
         response = self.client.patch(
-            f'/api/user/4/',
+            f'/api/user/5/',
             json.dumps(context),
             content_type='application/json',
         )
@@ -93,7 +129,7 @@ class UserTest(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     ###### Test User Delete ######
-    def test_user_delete(self):
+    def test_success_user_delete(self):
         login_context = {
             'email': 'test5@gmail.com',
             'password': 'Testtest1@'
@@ -104,18 +140,25 @@ class UserTest(APITestCase):
             content_type='application/json'
         )
 
+        user = authenticate(email=login_context['email'], password=login_context['password'])
+        user_id = UserDetailSerializer(user).data['id']
+
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["token"]["access"]}')
 
-        context = {
-            'email': response.data['email'],
-        }
         response = self.client.delete(
-            f'/api/user/',
-            json.dumps(context),
+            f'/api/user/{user_id}/',
             content_type='application/json',
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_fail_user_delete(self):
+        response = self.client.delete(
+            f'/api/user/10/',
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400)
 
     ###### Test Login ######
     def test_success_admin_login(self):
@@ -178,9 +221,3 @@ class UserTest(APITestCase):
 
         response = self.client.get('/api/admin/user/', **self.headers, content_type='application/json')
         self.assertEqual(response.status_code, 401)
-
-
-
-
-
-
