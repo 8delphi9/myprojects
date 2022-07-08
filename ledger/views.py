@@ -78,6 +78,7 @@ class DeletedRecordListView(APIView):
 
     def get(self, request):
         user = User.objects.get(email=request.user)
+        user = User.objects.get(id=request.user.id)
         if user:
             records = Record.deleted_objects.all().filter(user=user)
             serializer = RecordSummarySerializer(records, many=True)
@@ -93,6 +94,8 @@ class DeletedRecordDetailView(APIView):
         if record:
             serializer = LedgerDetailSerializer(record)
             return Response(serializer.data, status=status.HTTP_200_OK)
+            user = User.objects.get(id=request.user.id)
+            if record.user.id == user.id:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request, pk):
