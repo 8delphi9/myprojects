@@ -41,7 +41,7 @@ class RecordListView(APIView):
         """
         author : 전재완
         co-author : 임혁
-        param :
+        param : request
         return : 200 response
         explanation : 가계부 요약 정보 리스트 조회
         """
@@ -75,7 +75,7 @@ class DetailAPIView(APIView):
     co-author : 전재완, 이승민
     explanation
     get : path variable에 해당하는 가계부 상세 기록 조회 api
-    patch : 가계부 수정 api
+    put : 가계부 수정 api
     delete : 가계부 기록 삭제 api
     """
 
@@ -83,11 +83,11 @@ class DetailAPIView(APIView):
 
     def get(self, request, pk):
         """
-        author :
-        co-author :
-        param :
-        return :
-        explanation :
+        author : 임혁
+        co-author : 전재완
+        param : request, pk
+        return : 200/400 response
+        explanation : 요청한 사용자의 가계부 상세 내역 조회
         """
         record = Record.objects.get(id=pk)
         if record:
@@ -96,7 +96,7 @@ class DetailAPIView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=record_modify_params)
-    def patch(self, request, pk):
+    def put(self, request, pk):
         """
         author : 전재완
         co-author : 임혁
@@ -115,11 +115,11 @@ class DetailAPIView(APIView):
 
     def delete(self, request, pk):
         """
-        author :
+        author : 전재완
         co-author :
-        param :
-        return :
-        explanation :
+        param : request, pk
+        return :    200/400 response
+        explanation : 요청한 사용자의 가계부 내역 삭제
         """
         record = Record.objects.get(id=pk)
         if record:
@@ -161,7 +161,7 @@ class DeletedRecordDetailView(APIView):
     co-author : 임혁 이승민
     explanation
     get : 삭제된 가계부 상세 정보 조회 api
-    put : 삭제된 가계부 복구 api
+    patch : 삭제된 가계부 복구 api
     """
 
     permission_classes = [IsAuthenticated]
@@ -172,7 +172,7 @@ class DeletedRecordDetailView(APIView):
         co-author : 임혁
         param : request, pk
         return : 200/400 response
-        explanation : requset 보낸 사용자의 삭제된 pk 가계부 상세 조회
+        explanation : request 보낸 사용자의 삭제된 pk 가계부 상세 조회
         """
         record = Record.deleted_objects.get(id=pk)
         if record:
@@ -183,13 +183,13 @@ class DeletedRecordDetailView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         """
-        author :
-        co-author :
-        param :
-        return :
-        explanation :
+        author : 임혁
+        co-author : 전재완
+        param : request, pk
+        return : 200/400 resonse
+        explanation : request 보낸 사용자의 삭제된 가계부 내역 복원
         """
         record = Record.deleted_objects.get(id=pk)
         if record:
