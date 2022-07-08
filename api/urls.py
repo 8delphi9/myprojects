@@ -11,7 +11,8 @@ from ledger.views import(
 )
 from user.token_views import MyTokenObtainPairView, ApiRefreshRefreshTokenView
 from user.views import (
-    UserApiView,
+    UserAPIView,
+    GenaralUserApiView,
     UserCreateApiView,
 )
 from rest_framework_simplejwt.views import (
@@ -51,10 +52,10 @@ token_patterns = [
 ]
 
 user_patterns = [
-    path('', UserApiView.as_view(), name='login'),
+    path('<int:user_id>/', GenaralUserApiView.as_view(), name='user'),
     path('read/test/<int:user_id>/', user_update, name='user_read'),
     path('signup/', UserCreateApiView.as_view(), name='signup'),
-    path('signup/UD/', UserApiView.as_view(), name='UDUser'),
+    #path('signup/UD/', UserApiView.as_view(), name='UDUser'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
 ]
