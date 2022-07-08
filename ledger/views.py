@@ -40,6 +40,7 @@ class RecordListView(APIView):
         record = Record.objects.create(user=user, **request.data)
         serializer = LedgerDetailSerializer(record)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = User.objects.get(id=request.user.id)
 
 
 class DetailAPIView(APIView):
