@@ -46,6 +46,10 @@ class  SoftDeleteModel(models.Model):
 
 
 class Record(SoftDeleteModel):
+    """
+    author : 전재완
+    explanation : 가계부 기록 모델
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     amount = models.IntegerField(null=False, default=0)
