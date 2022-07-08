@@ -208,20 +208,37 @@ class UserCreateApiView(GenericAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-class UserApiView(GenericAPIView):
+class GenaralUserApiView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request):
-
+    def get(self, request, user_id : int):
         """
-         author: 정용수
-        회원정보 변경: 이메일로 회원 정보를 찾아 nickname을 변경함
-        :param request: QueryDict
+        author: 정용수
+        회원 상세정보 조회: user_id로 상세 정보를 조회
+        :param request: Int
         :return: JSON
         """
         try:
-            user = User.objects.get(email=request.data.get('email'))
+            user = User.objects.get(id=user_id)
+
+            return Response({
+                "message": "회원 조회가 완료되었습니다.",
+                "회원 상세 정보": UserDetailSerializer(user).data
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "message": "해당 하는 회원 정보가 없습니다."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, user_id : int):
+        """
+         author: 정용수
+        회원정보 변경: user_id로 회원 정보를 찾아 email, nickname을 변경함
+        :param request: Int
+        :return: JSON
+        """
+        try:
+            user = User.objects.get(id=user_id)
 
             update_user_serializer = UserSerializer(user, data=request.data)
 
@@ -236,20 +253,21 @@ class UserApiView(GenericAPIView):
                 "message": "해당 하는 회원 정보가 없습니다."
             }, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
+    def delete(self, request, user_id : int):
         """
+         author: 정용수
         회원탈퇴: 이메일로 회원 탈퇴를 진행함
-        :param request: QueryDict
+        :param request: Int
         :return: JSON
         """
         try:
-            user = User.objects.get(email=request.data.get('email'))
+            user = User.objects.get(id=user_id)
             user.delete()
 
             return Response({
                 "message": "회원 탈퇴가 완료되었습니다."
             }, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
+        except Exception as e:
             return Response({
-                "message": "해당 하는 회원 정보가 없습니다."
+                "message": f"{e}"
             }, status=status.HTTP_400_BAD_REQUEST)
