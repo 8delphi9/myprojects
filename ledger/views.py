@@ -33,6 +33,7 @@ class RecordListView(APIView):
         serializer = RecordSummarySerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+        user = User.objects.get(id=request.user.id)
     @swagger_auto_schema(request_body=record_post_params)
     def post(self, request):
         user = User.objects.get(email=request.user)
