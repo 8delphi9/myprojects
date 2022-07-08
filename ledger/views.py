@@ -84,6 +84,13 @@ class DeletedRecordListView(APIView):
 
 
 class DeletedRecordDetailView(APIView):
+    '''
+    author: 임혁
+    co-author: 
+    param: String
+    return: JSON
+    설명: 삭제된 특정 가계부 내역을 상세조회하거나, 복구시키도록 하는 View
+    '''
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
@@ -100,4 +107,3 @@ class DeletedRecordDetailView(APIView):
             serializer = LedgerDetailSerializer(record)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
