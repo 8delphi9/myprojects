@@ -209,7 +209,7 @@ class UserCreateApiView(GenericAPIView):
 
 
 class GenaralUserApiView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
     def get(self, request, user_id : int):
         """
