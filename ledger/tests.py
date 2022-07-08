@@ -35,8 +35,8 @@ class LedgerApiTest(APITestCase):
             "date": "2022-07-06",
             "amount": 300000,
             "in_ex": "income",
-            "method": "expense",
-            "memo": "string",
+            "method": "cash",
+            "memo": "This is test ledger history.",
         }
 
         # When
@@ -86,8 +86,8 @@ class LedgerApiTest(APITestCase):
             "date": "2022-07-06",
             "amount": 300000,
             "in_ex": "income",
-            "method": "expense",
-            "memo": "string",
+            "method": "cash",
+            "memo": "This is test ledger history.",
         }
         result = self.client.post(
             "http://127.0.0.1:8000/api/ledgers/",
@@ -123,8 +123,8 @@ class LedgerApiTest(APITestCase):
             "date": "2022-07-06",
             "amount": 300000,
             "in_ex": "income",
-            "method": "expense",
-            "memo": "string",
+            "method": "cash",
+            "memo": "This is test ledger history.",
         }
         result = self.client.post(
             "http://127.0.0.1:8000/api/ledgers/",
@@ -134,7 +134,7 @@ class LedgerApiTest(APITestCase):
         record_id = json.loads(result.content.decode("utf-8"))["id"]
 
         # When
-        result = self.client.patch(
+        result = self.client.put(
             f"http://127.0.0.1:8000/api/ledgers/{record_id}/",
             json.dumps(data),
             content_type="application/json",
@@ -161,8 +161,8 @@ class LedgerApiTest(APITestCase):
             "date": "2022-07-06",
             "amount": 300000,
             "in_ex": "income",
-            "method": "expense",
-            "memo": "string",
+            "method": "cash",
+            "memo": "This is test ledger history.",
         }
         result = self.client.post(
             "http://127.0.0.1:8000/api/ledgers/",
@@ -182,31 +182,122 @@ class LedgerApiTest(APITestCase):
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
     def test_get_deleted_record_list(self):
+        """
+        author : 임혁
+        param : none
+        return : none
+        explanation
+        삭제된 가계부 기록 리스트 조회 api 테스트
+        status code와 반환 데이터 타입 검사
+        """
         # Given
-
+        data = {
+            "date": "2022-07-07",
+            "amount": 500000,
+            "in_ex": "expense",
+            "method": "transfer",
+            "memo": "This is test ledger history.",
+        }
+        result = self.client.post(
+            "http://127.0.0.1:8000/api/ledgers/",
+            json.dumps(data),
+            content_type="application/json",
+        )
+        record_id = json.loads(result.content.decode("utf-8"))["id"]
+        result = self.client.delete(
+            f"http://127.0.0.1:8000/api/ledgers/{record_id}/",
+            json.dumps(data),
+            content_type="application/json",
+        )
         # When
-
+        result = self.client.get(f"http://127.0.0.1:8000/api/bin/")
+        result_content = json.loads(result.content.decode("utf-8"))
         # Then
-
-        pass
-
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(type(result_content), type(list()))
+    
     def test_get_deleted_record_detail(self):
+        """
+        author : 임혁
+        param : none
+        return : none
+        explanation
+        삭제된 가계부 기록 상세 조회 api 테스트
+        status code와 삭제된 내역 데이터 검사
+        """
         # Given
+        data = {
+            "date": "2022-07-06",
+            "amount": 200000,
+            "in_ex": "income",
+            "method": "cash",
+            "memo": "This is test ledger history.",
+        }
+        result = self.client.post(
+            "http://127.0.0.1:8000/api/ledgers/",
+            json.dumps(data),
+            content_type="application/json",
+        )
+        record_id = json.loads(result.content.decode("utf-8"))["id"]
 
         # When
+        result = self.client.delete(
+            f"http://127.0.0.1:8000/api/ledgers/{record_id}/",
+            json.dumps(data),
+            content_type="application/json",
+        )
+        record_id = json.loads(result.content.decode("utf-8"))["id"]
 
+        # When
+        result = self.client.get(f"http://127.0.0.1:8000/api/bin/{record_id}/")
+        result_content = json.loads(result.content.decode("utf-8"))
         # Then
-
-        pass
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result_content["id"], record_id)
+        self.assertEqual(result_content["date"], data["date"])
+        self.assertEqual(result_content["amount"], data["amount"])
+        self.assertEqual(result_content["in_ex"], data["in_ex"])
+        self.assertEqual(result_content["method"], data["method"])
+        self.assertEqual(result_content["memo"], data["memo"])
 
     def test_restore_deleted_record(self):
+        """
+        author : 임혁
+        param : none
+        return : none
+        explanation
+        삭제된 가계부 기록 복구 api 테스트
+        status code 검사
+        """
         # Given
+        data = {
+            "date": "2022-07-06",
+            "amount": 300000,
+            "in_ex": "income",
+            "method": "cash",
+            "memo": "This is test ledger history.",
+        }
+        result = self.client.post(
+            "http://127.0.0.1:8000/api/ledgers/",
+            json.dumps(data),
+            content_type="application/json",
+        )
+        record_id = json.loads(result.content.decode("utf-8"))["id"]
 
         # When
-
+        result = self.client.delete(
+            f"http://127.0.0.1:8000/api/ledgers/{record_id}/",
+            json.dumps(data),
+            content_type="application/json",
+        )
+        record_id = json.loads(result.content.decode("utf-8"))["id"]
+        result = self.client.patch(
+            f"http://127.0.0.1:8000/api/bin/{record_id}/",
+            json.dumps(data),
+            content_type="application/json",
+        )
         # Then
-
-        pass
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
 
 
 class WithoutLoginLedgerApiTest(TestCase):
@@ -231,7 +322,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             "amount": 300000,
             "in_ex": "income",
             "method": "cash",
-            "memo": "this  is test",
+            "memo": "This is test ledger history.",
         }
 
         # When
@@ -268,7 +359,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             amount=30000,
             in_ex="expense",
             method="cash",
-            memo="test",
+            memo="This is test ledger history.",
         )
         record_id = record.id
 
@@ -293,13 +384,13 @@ class WithoutLoginLedgerApiTest(TestCase):
             amount=30000,
             in_ex="expense",
             method="cash",
-            memo="test",
+            memo="This is test ledger history.",
         )
         record_id = record.id
         data = {"amount": 100000, "memo": "record modify test"}
 
         # When
-        result = self.client.patch(
+        result = self.client.put(
             f"http://127.0.0.1:8000/api/ledgers/{record_id}/", data=data
         )
 
@@ -321,7 +412,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             amount=30000,
             in_ex="expense",
             method="cash",
-            memo="test",
+            memo="This is test ledger history.",
         )
         record_id = record.id
 
@@ -359,7 +450,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             amount=30000,
             in_ex="expense",
             method="cash",
-            memo="test",
+            memo="This is test ledger history.",
         )
         record.delete()
         record_id = record.id
@@ -385,13 +476,13 @@ class WithoutLoginLedgerApiTest(TestCase):
             amount=30000,
             in_ex="expense",
             method="cash",
-            memo="test",
+            memo="This is test ledger history.",
         )
         record.delete()
         record_id = record.id
 
         # When
-        result = self.client.put(f"http://127.0.0.1:8000/api/bin/{record_id}/")
+        result = self.client.patch(f"http://127.0.0.1:8000/api/bin/{record_id}/")
 
         # Then
         self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
