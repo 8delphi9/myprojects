@@ -1,6 +1,7 @@
 from rest_framework.test import APIClient
 from rest_framework import status
-from user.models import  User
+from django.test import TestCase
+from user.models import User
 from .models import Record
 # Create your tests here.
 
@@ -25,7 +26,7 @@ class WithoutLoginLedgerApiTest(TestCase):
             "user": 1,
             "date": "2022-07-06",
             "amount": 300000,
-            "in_ix": "income",
+            "in_ex": "income",
             "method": "cash",
             "memo": "this  is test"
         }

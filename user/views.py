@@ -166,6 +166,8 @@ class UserCreateApiView(GenericAPIView):
 
 
 class UserApiView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
     def patch(self, request):
 
         """
