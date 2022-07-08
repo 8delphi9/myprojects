@@ -14,8 +14,8 @@ class RecordSummarySerializer(serializers.ModelSerializer):
 
 class LedgerDetailSerializer(serializers.ModelSerializer):
     """
-    author :
-    explanation :
+    author : 임혁
+    explanation : 가계부의 상세 정보 Serializer
     """
     class Meta:
         model = Record

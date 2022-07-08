@@ -85,11 +85,11 @@ class DetailAPIView(APIView):
 
     def get(self, request, pk):
         """
-        author :
+        author : 임혁
         co-author :
-        param :
-        return :
-        explanation :
+        param : request, pk
+        return : 200/400 response
+        explanation : 입력받은 가계부 내역 id로 가계부 상세내용 조회
         """
         record = Record.objects.get(id=pk)
         if record:
@@ -98,7 +98,7 @@ class DetailAPIView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=record_modify_params)
-    def patch(self, request, pk):
+    def put(self, request, pk):
         """
         author : 전재완
         co-author : 임혁
@@ -185,13 +185,13 @@ class DeletedRecordDetailView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         """
-        author :
-        co-author :
-        param :
-        return :
-        explanation :
+        author : 전재완
+        co-author : 임혁
+        param : request, pk
+        return : 200/400 response
+        explanation : 삭제된 특정 가계부 내역 복원
         """
         record = Record.deleted_objects.get(id=pk)
         if record:
