@@ -57,3 +57,27 @@ class Test(APITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_user_delete(self):
+        login_context = {
+            'email': 'test5@gmail.com',
+            'password': 'Testtest1@'
+        }
+        response = self.client.post(
+            f'/api/user/login/',
+            json.dumps(login_context),
+            content_type='application/json'
+        )
+
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["token"]["access"]}')
+
+        context = {
+            'email': response.data['email'],
+        }
+        response = self.client.delete(
+            f'/api/user/',
+            json.dumps(context),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
