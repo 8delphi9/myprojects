@@ -168,8 +168,26 @@ class UserCreateApiView(GenericAPIView):
 class UserApiView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request):
+    def get(self, request):
+        """
+        author: 정용수
+        회원 상세정보 조회: user_id로 상세 정보를 조회
+        :param request: String
+        :return: JSON
+        """
+        try:
+            user = User.objects.get(id=request.GET.get('user_id'))
 
+            return Response({
+                "message": "회원 조회가 완료되었습니다.",
+                "회원 상세 정보": UserDetailSerializer(user).data
+            }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({
+                "message": "해당 하는 회원 정보가 없습니다."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request):
         """
          author: 정용수
         회원정보 변경: 이메일로 회원 정보를 찾아 nickname을 변경함
