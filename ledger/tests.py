@@ -1,6 +1,7 @@
 from rest_framework.test import APIClient
 from rest_framework import status
-from user.models import  User
+from django.test import TestCase
+from user.models import User
 from .models import Record
 # Create your tests here.
 
