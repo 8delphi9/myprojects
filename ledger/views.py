@@ -84,10 +84,10 @@ class DetailAPIView(APIView):
     def get(self, request, pk):
         """
         author : 임혁
-        co-author : 전재완
+        co-author :
         param : request, pk
         return : 200/400 response
-        explanation : 요청한 사용자의 가계부 상세 내역 조회
+        explanation : 입력받은 가계부 내역 id로 가계부 상세내용 조회
         """
         record = Record.objects.get(id=pk)
         if record:
