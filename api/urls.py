@@ -43,7 +43,7 @@ schema_view = get_schema_view(
 
 # 토큰
 token_patterns = [
-    path('', MyTokenObtainPairView.as_view()),
+    path('<int:user_id>', MyTokenObtainPairView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
     path('verify/', TokenVerifyView.as_view()),
     path('balcklist/', TokenBlacklistView.as_view()),
