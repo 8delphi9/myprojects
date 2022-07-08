@@ -42,7 +42,8 @@ class UserTest(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token_access}')
 
-    def test_user_update(self):
+    ###### Test User Update ######
+    def test_success_user_update(self):
         login_context = {
             'email': 'test5@gmail.com',
             'password': 'Testtest1@'
@@ -60,13 +61,38 @@ class UserTest(APITestCase):
             'nickname': 'test55'
         }
         response = self.client.patch(
-            f'/api/user/',
+            f'/api/user/4/',
             json.dumps(context),
             content_type='application/json',
         )
 
         self.assertEqual(response.status_code, 200)
 
+    ###### Test User Update ######
+    def test_fail_user_update(self):
+        login_context = {
+            'email': 'test5@gmail.com',
+            'password': 'Testtest1@'
+        }
+        response = self.client.post(
+            f'/api/user/login/',
+            json.dumps(login_context),
+            content_type='application/json'
+        )
+
+        context = {
+            'email': response.data['email'],
+            'nickname': 'test55'
+        }
+        response = self.client.patch(
+            f'/api/user/4/',
+            json.dumps(context),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    ###### Test User Delete ######
     def test_user_delete(self):
         login_context = {
             'email': 'test5@gmail.com',
