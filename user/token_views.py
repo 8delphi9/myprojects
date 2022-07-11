@@ -14,10 +14,22 @@ User = get_user_model()
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
+    """
+    author : 이승민
+    explanation :
+         - token 커스텀한 것을 적용
+    """
     serializer_class = MyTokenObtainPairSerializer
 
 
 class ApiRefreshRefreshTokenView(GenericAPIView):
+    """
+    author : 이승민
+    explanation :
+         - token 커스텀
+         - 토큰 payload 필수데이터에 추가적인 필드 값을 삽입
+         - 만료된 refresh token은 자동으로 blacklist에 저장.
+    """
     permission_classes = ()  # 중요, 이렇게 해야 접근이 가능합니다.
     authentication_classes = ()  # 중요, 이렇게 해야 접근이 가능합니다.
 
@@ -25,23 +37,28 @@ class ApiRefreshRefreshTokenView(GenericAPIView):
 
     # 리프레시 토큰 자체를 다시 발급
     def post(self, request: HttpRequest):
-        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(data=request.data)
+        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(
+            data=request.data
+        )
 
         serializer.is_valid(raise_exception=True)
 
-        refresh: str = serializer.validated_data['refresh']
+        refresh: str = serializer.validated_data["refresh"]
 
         try:
             refresh_token: RefreshToken = RefreshToken(refresh)
-        except TokenError as e:
-            raise InvalidToken(e)
+        except TokenError:
+            raise InvalidToken(TokenError)
 
         user: User = get_object_or_404(User, id=refresh_token['user_id'])
-        new_refresh_token = MyTokenObtainPairSerializer.get_token(user)  # 이걸로 토큰을 생성해야 합니다. 다른 방법으로 하면 페이로드에 필수데이터가 누락된 버전이 생김
-        new_access_token = new_refresh_token.access_token
-        refresh_token.blacklist()  # 꼭 블랙리스트에 넣어주세요.
+        new_refresh_token = MyTokenObtainPairSerializer.get_token(user)
 
-        return Response({
-            'refresh': str(new_refresh_token),
-            'access': str(new_access_token),
-        })
+        new_access_token = new_refresh_token.access_token
+        refresh_token.blacklist()
+
+        return Response(
+            {
+                "refresh": str(new_refresh_token),
+                "access": str(new_access_token),
+            }
+        )
