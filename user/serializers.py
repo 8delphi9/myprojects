@@ -10,7 +10,24 @@ User = get_user_model()
 
 
 def validate_password12(password1, password2):
+    """
+    author : 이승민
+    :param password1: 첫 번째 비밀번호
+    :param password2: 두 번째 비밀번호
+    :return: password1
+    error :
+        - password1 validate
+        - password1, 2 require
+        - password1 == password2
+    explanation :
+        - 회원가입 시 password1, password2를 입력 후 일치하는 비교
+        - 영문자 대소문자, 숫자, 특수문자(리스트)만 허용
+        - 영어 대소문자 필수
+        - 특수문자 필수
+        - 글자수 제한
+    """
     validate_condition = [
+
         lambda s: all(
             x.islower()
             or x.isupper()
@@ -23,8 +40,8 @@ def validate_password12(password1, password2):
             (x in ["!", "@", "#", "$", "%", "^", "&", "*", "_"]) for x in s
         ),  ## 특수문자 필수
         lambda s: len(s) == len(s.replace(" ", "")),
-        lambda s: len(s) >= 6,  ## 글자수 제한
-        lambda s: len(s) <= 20,  ## 글자수 제한
+        lambda s: len(s) >= 6,
+        lambda s: len(s) <= 20,
     ]
 
     for validator in validate_condition:
@@ -41,6 +58,12 @@ def validate_password12(password1, password2):
 
 # 유저 시리얼라이저
 class UserSerializer(serializers.ModelSerializer):
+    """
+    author : 이승민
+    explanation :
+        - 유저의 정보를 조회하기 위한 시리얼라이저
+        - 어드민전용
+    """
     class Meta:
         model = User
         fields = [
@@ -53,6 +76,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 # 회원가입 시리얼라이저
 class RegisterSerializer(serializers.Serializer):
+    """
+    author : 이승민
+    explanation :
+        - 회원가입 시리얼라이저
+        - email, password1, password2, nickname의 validate 확인
+    error :
+         - validate_email : 이메일 입력 확인, 이메일 형식 확인, 이메일 중복 확인
+         - validate_nickname : 닉네임 입력 확인, 닉네임 중복 확인
+    """
     email = serializers.EmailField(max_length=100, write_only=True)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
@@ -94,7 +126,9 @@ class RegisterSerializer(serializers.Serializer):
 
 class LoginSerializer(serializers.Serializer):
     """
-    로그인 시리얼라이저
+    author : 이승민
+    explanation :
+        - 로그인 시리얼라이저
     """
 
     email = serializers.EmailField(max_length=100, write_only=True)
@@ -103,7 +137,12 @@ class LoginSerializer(serializers.Serializer):
 
 class LogoutSerializer(serializers.Serializer):
     """
-    로그아웃 시리얼라이저 (인증된 유저 전용)
+    author : 이승민
+    explanation :
+        - blacklist를 활용
+        - token을 blacklist 테이블에 저장
+    error :
+        - 잘못된 토큰일 경우.
     """
 
     refresh = serializers.CharField()
@@ -125,7 +164,9 @@ class LogoutSerializer(serializers.Serializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """
-    유저 디테일 시리얼라이저 (어드민 전용)
+    author : 이승민
+    explanation :
+        - 어드민 권한으로 해당 유저의 정보를 조회할 수 있다.
     """
 
     class Meta:
@@ -135,7 +176,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class UserUpdateDeleteSerializer(serializers.ModelSerializer):
     """
-    유저 업데이트 시리얼라이저 (어드민 전용)
+    author : 이승민
+    explanation :
+         - 어드민 권한으로 해당 유저의 정보를 수정 및 삭제할 수 있다.
     """
 
     class Meta:

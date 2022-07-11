@@ -12,6 +12,14 @@ User = get_user_model()
 
 
 class CustomJWTAuthentication(BaseAuthentication):
+    """
+    author : 이승민
+    explanation :
+         - PyJWT를 직접 커스텀
+         - authenticate와 authenticate_credentials, enforce_csrf의 함수를 통해서
+           유저에 대한 토큰을 생성하고 payload를 인코딩, 디코딩 작업을 함.
+    """
+
     def authenticate(self, request):
         authorization_header = request.headers.get("Authorization")
 
@@ -56,10 +64,21 @@ class CustomJWTAuthentication(BaseAuthentication):
 
 
 def get_access_token(user):
+    """
+    author : 이승민
+    explanation :
+         - access_token의 payload에 user_id, email, is_staff 필드 값을 추가
+         - 토큰 인코딩
+    """
     access_token_payload = {
-        "user_id": user.id,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=60),
-        "iat": datetime.datetime.utcnow(),
+        'user_id': user.id,
+        'email': user.email,
+        'is_staff': user.is_staff,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(
+            days=0,
+            minutes=60
+        ),
+        'iat': datetime.datetime.utcnow()
     }
 
     access_token = jwt.encode(access_token_payload, SECRET_KEY, algorithm="HS256")
@@ -68,10 +87,18 @@ def get_access_token(user):
 
 
 def get_refresh_token(user):
+    """
+    author : 이승민
+    explanation :
+         - refresh_token의 payload에 user_id, email, is_staff 필드 값을 추가
+         - 토큰 인코딩
+    """
     refresh_token_payload = {
-        "user_id": user.id,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
-        "iat": datetime.datetime.utcnow(),
+        'user_id': user.id,
+        'email': user.email,
+        'is_staff': user.is_staff,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
+        'iat': datetime.datetime.utcnow(),
     }
 
     refresh_token = jwt.encode(refresh_token_payload, SECRET_KEY, algorithm="HS256")
@@ -80,6 +107,11 @@ def get_refresh_token(user):
 
 
 def jwt_login(response, user):
+    """
+    author : 이승민
+    explanation :
+        - user에 대한 로그인 요청이 오면 토큰들을 발행한다.
+    """
     access_token = get_access_token(user)
     refresh_token = get_refresh_token(user)
 
