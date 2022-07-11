@@ -30,6 +30,7 @@ User = get_user_model()
 # Create your views here.
 class UserLoginAPIView(mixins.ListModelMixin,
                        viewsets.GenericViewSet):
+
     """
     author : 이승민
     로그인 : email, password, list (get)
@@ -44,24 +45,24 @@ class UserLoginAPIView(mixins.ListModelMixin,
 
 
     def get_queryset(self):
-        if self.action == 'list':
+        if self.action == "list":
             return User.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return UserSerializer
-        elif self.request.method == 'POST':
+        elif self.request.method == "POST":
             return LoginSerializer
 
     def get_permissions(self):
         permission_classes = []
-        if self.action == 'list':
+        if self.action == "list":
             permission_classes = [IsAdminUser]
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
 
-    @action(detail=False, methods='post')
+    @action(detail=False, methods="post")
     def login(self, request):
         """
         author : 이승민
@@ -70,7 +71,9 @@ class UserLoginAPIView(mixins.ListModelMixin,
                          올바르다면 access, refresh 토큰을 발급한다.
                          이때 토큰에는 유저의 id와 email이랑 is_staff 필드를 payload에 같이 삽입 후 엔코딩한다.
         """
-        user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
+        user = authenticate(
+            email=request.data.get("email"), password=request.data.get("password")
+        )
         if user is not None:
             token = MyTokenObtainPairSerializer.get_token(user)
             refresh_token = str(token)
@@ -100,10 +103,11 @@ class LogoutAPIView(viewsets.GenericViewSet):
     explanation :
         - logout (post) : access_token을 blacklist 테이블에 저장을 해서 로그아웃 처리를 한다.
     """
+
     queryset = User.objects.all()
     serializer_class = LogoutSerializer
 
-    @action(detail=False, methods='post')
+    @action(detail=False, methods="post")
     def logout(self, request):
         """
         author : 이승민
@@ -118,10 +122,12 @@ class LogoutAPIView(viewsets.GenericViewSet):
         return Response({'message': '로그아웃이 정상적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
 
 
-class UserDetailAPIView(mixins.RetrieveModelMixin,
-                        mixins.UpdateModelMixin,
-                        mixins.DestroyModelMixin,
-                        viewsets.GenericViewSet):
+class UserDetailAPIView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     """
     author : 이승민
     어드민 : detail (get), update (patch), delete (delete)
@@ -135,20 +141,21 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
         - update (patch) <어드민전용> : 어드민 권한으로 해당 유저의 정보를 수정할 수 있다.
         - delete (delete) <어드민전용> : 어드민 권한으로 해당 유저를 삭제할 수 있다.
     """
-    lookup_url_kwarg = 'user_id'
+
+    lookup_url_kwarg = "user_id"
 
     def get_queryset(self):
         return User.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return UserDetailSerializer
         else:
             return UserUpdateDeleteSerializer
 
     def get_permissions(self):
         permission_classes = []
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             permission_classes = [IsAdminUser]
         else:
             permission_classes = [IsAdminUser]
@@ -170,12 +177,12 @@ class UserDetailAPIView(mixins.RetrieveModelMixin,
             - update (patch) <어드민전용> : 어드민 권한으로 해당 유저의 정보를 수정할 수 있다.
         """
         kwargs['partial'] = True
+
         return self.update(request, *args, **kwargs)
 
 
-class UserReadAPIView(mixins.RetrieveModelMixin,
-                      viewsets.GenericViewSet):
-    lookup_url_kwarg = 'user_id'
+class UserReadAPIView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    lookup_url_kwarg = "user_id"
     permission_classes = [IsOwner]
 
     def get_queryset(self):
@@ -200,13 +207,11 @@ class UserCreateApiView(GenericAPIView):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response({
-                "message": "회원 가입이 완료되었습니다."
-            }, status=status.HTTP_200_OK)
-        return Response({
-            "message": "이메일 또는 패스워드 또는 닉네임 형식을 확인해주세요."
-        }, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"message": "회원 가입이 완료되었습니다."}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "이메일 또는 패스워드 또는 닉네임 형식을 확인해주세요."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 class GenaralUserApiView(GenericAPIView):
     permission_classes = [IsOwner]
@@ -245,13 +250,11 @@ class GenaralUserApiView(GenericAPIView):
             if update_user_serializer.is_valid(raise_exception=True):
                 update_user_serializer.save()
 
-            return Response({
-                "message": "회원 정보가 변경되었습니다."
-            }, status=status.HTTP_200_OK)
+            return Response({"message": "회원 정보가 변경되었습니다."}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({
-                "message": "해당 하는 회원 정보가 없습니다."
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "해당 하는 회원 정보가 없습니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def delete(self, request, user_id : int):
         """
@@ -271,3 +274,4 @@ class GenaralUserApiView(GenericAPIView):
             return Response({
                 "message": f"{e}"
             }, status=status.HTTP_400_BAD_REQUEST)
+

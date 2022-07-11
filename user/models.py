@@ -10,11 +10,11 @@ class UserManager(BaseUserManager):
     def create_user(self, email, nickname, password, **extra_fields):
 
         if not email:
-            raise ValueError('이메일은 필수 항목입니다.')
+            raise ValueError("이메일은 필수 항목입니다.")
         if not password:
-            raise ValueError('비밀번호는 필수 항목입니다.')
+            raise ValueError("비밀번호는 필수 항목입니다.")
         if not nickname:
-            raise ValueError('닉네임은 필수 항목 입니다.')
+            raise ValueError("닉네임은 필수 항목 입니다.")
 
         user = self.model(
             email=UserManager.normalize_email(email),
@@ -46,16 +46,14 @@ class UserManager(BaseUserManager):
 # User Model
 class User(AbstractBaseUser):
     username = None
-    email = models.EmailField('이메일', unique=True, max_length=100)
-    nickname = models.CharField('닉네임', max_length=100, unique=True)
+    email = models.EmailField("이메일", unique=True, max_length=100)
+    nickname = models.CharField("닉네임", max_length=100, unique=True)
 
     last_login = models.DateTimeField(blank=True, null=True)
     is_admin = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = [
-        'nickname'
-    ]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["nickname"]
 
     objects = UserManager()
 
@@ -78,9 +76,4 @@ class User(AbstractBaseUser):
         return True
 
     class Meta:
-        db_table = 'users'
-
-
-
-
-
+        db_table = "users"

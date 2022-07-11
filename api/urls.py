@@ -3,7 +3,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from .views import *
-from ledger.views import(
+from ledger.views import (
     RecordListView,
     DetailAPIView,
     DeletedRecordListView,
@@ -31,15 +31,15 @@ from user.urls import (
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='Payhere',
-        default_version='api',
-        description='Payhere Swagger',
+        title="Payhere",
+        default_version="api",
+        description="Payhere Swagger",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(name="test", email="test@test.com"),
         license=openapi.License(name="Test License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,)
+    permission_classes=(permissions.AllowAny,),
 )
 
 # 토큰
@@ -65,34 +65,39 @@ admin_patterns = [
 ]
 
 ledger_patterns = [
-    path('', RecordListView.as_view()),
-    path('<int:pk>/', DetailAPIView.as_view()),
+    path("", RecordListView.as_view()),
+    path("<int:pk>/", DetailAPIView.as_view()),
 ]
 
 bin_patterns = [
-    path('', DeletedRecordListView.as_view()),
-    path('<int:pk>/', DeletedRecordDetailView.as_view()),
+    path("", DeletedRecordListView.as_view()),
+    path("<int:pk>/", DeletedRecordDetailView.as_view()),
 ]
 
 
 urlpatterns = [
-    #ledger
-    path('ledgers/', include(ledger_patterns)),
-    
-    #bin
-    path('bin/', include(bin_patterns)),
-    
+    # ledger
+    path("ledgers/", include(ledger_patterns)),
+    # bin
+    path("bin/", include(bin_patterns)),
     # user
-    path('user/', include(user_patterns)),
-
+    path("user/", include(user_patterns)),
     # admin
-    path('admin/', include(admin_patterns)),
-
+    path("admin/", include(admin_patterns)),
     # 토큰 url
-    path('token/', include(token_patterns)),
-
+    path("token/", include(token_patterns)),
     # swagger
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name="schema-json"),
-    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    re_path(
+        r"^swagger/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
 ]

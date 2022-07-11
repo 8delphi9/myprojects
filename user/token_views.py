@@ -37,11 +37,13 @@ class ApiRefreshRefreshTokenView(GenericAPIView):
 
     # 리프레시 토큰 자체를 다시 발급
     def post(self, request: HttpRequest):
-        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(data=request.data)
+        serializer: ApiRefreshRefreshTokenSerializer = self.get_serializer(
+            data=request.data
+        )
 
         serializer.is_valid(raise_exception=True)
 
-        refresh: str = serializer.validated_data['refresh']
+        refresh: str = serializer.validated_data["refresh"]
 
         try:
             refresh_token: RefreshToken = RefreshToken(refresh)
@@ -50,10 +52,13 @@ class ApiRefreshRefreshTokenView(GenericAPIView):
 
         user: User = get_object_or_404(User, id=refresh_token['user_id'])
         new_refresh_token = MyTokenObtainPairSerializer.get_token(user)
+
         new_access_token = new_refresh_token.access_token
         refresh_token.blacklist()
 
-        return Response({
-            'refresh': str(new_refresh_token),
-            'access': str(new_access_token),
-        })
+        return Response(
+            {
+                "refresh": str(new_refresh_token),
+                "access": str(new_access_token),
+            }
+        )

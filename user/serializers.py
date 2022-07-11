@@ -27,9 +27,18 @@ def validate_password12(password1, password2):
         - 글자수 제한
     """
     validate_condition = [
-        lambda s: all(x.islower() or x.isupper() or x.isdigit() or (x in ['!', '@', '#', '$', '%', '^', '&', '*', '_']) for x in s),
-        lambda s: any(x.islower() or x.isupper() for x in s),
-        lambda s: any((x in ['!', '@', '#', '$', '%', '^', '&', '*', '_']) for x in s),
+
+        lambda s: all(
+            x.islower()
+            or x.isupper()
+            or x.isdigit()
+            or (x in ["!", "@", "#", "$", "%", "^", "&", "*", "_"])
+            for x in s
+        ),  ## 영문자 대소문자, 숫자, 특수문자(리스트)만 허용
+        lambda s: any(x.islower() or x.isupper() for x in s),  ## 영어 대소문자 필수
+        lambda s: any(
+            (x in ["!", "@", "#", "$", "%", "^", "&", "*", "_"]) for x in s
+        ),  ## 특수문자 필수
         lambda s: len(s) == len(s.replace(" ", "")),
         lambda s: len(s) >= 6,
         lambda s: len(s) <= 20,
@@ -37,17 +46,12 @@ def validate_password12(password1, password2):
 
     for validator in validate_condition:
         if not validator(password1):
-            raise serializers.ValidationError(
-                _("password ValidationError")
-            )
+            raise serializers.ValidationError(_("password ValidationError"))
 
     if not password1 or not password2:
-        raise serializers.ValidationError(
-            _("need two password fields")
-        )
+        raise serializers.ValidationError(_("need two password fields"))
     if password1 != password2:
-        raise serializers.ValidationError(
-            _("password fields didn't match!"))
+        raise serializers.ValidationError(_("password fields didn't match!"))
 
     return password1
 
@@ -63,10 +67,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id',
-            'email',
-            'nickname',
-            'last_login',
+            "id",
+            "email",
+            "nickname",
+            "last_login",
         ]
 
 
@@ -88,33 +92,27 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate_email(self, email):
         if not email:
-            raise serializers.ValidationError(
-                _('email field not allowed empty')
-            )
+            raise serializers.ValidationError(_("email field not allowed empty"))
         get_email = User.objects.filter(email__iexact=email)
         if get_email.count() > 0:
-            raise serializers.ValidationError(
-                _('email is already registered')
-            )
+            raise serializers.ValidationError(_("email is already registered"))
         return email
 
     def validate_nickname(self, nickname):
         if not nickname:
-            raise serializers.ValidationError(
-                _('nickname field not allowed empty')
-            )
+            raise serializers.ValidationError(_("nickname field not allowed empty"))
         get_name = User.objects.filter(nickname__iexact=nickname)
         if get_name.count() > 0:
             raise serializers.ValidationError(
-                _('nickname is already registered with this e-mail address')
+                _("nickname is already registered with this e-mail address")
             )
 
         return nickname
 
     def validate(self, data):
-        data['password1'] = validate_password12(data['password1'], data['password2'])
-        data['email'] = self.validate_email(data['email'])
-        data['nickname'] = self.validate_nickname(data['nickname'])
+        data["password1"] = validate_password12(data["password1"], data["password2"])
+        data["email"] = self.validate_email(data["email"])
+        data["nickname"] = self.validate_nickname(data["nickname"])
         return data
 
     def create(self, validate_data):
@@ -132,6 +130,7 @@ class LoginSerializer(serializers.Serializer):
     explanation :
         - 로그인 시리얼라이저
     """
+
     email = serializers.EmailField(max_length=100, write_only=True)
     password = serializers.CharField(write_only=True)
 
@@ -145,14 +144,13 @@ class LogoutSerializer(serializers.Serializer):
     error :
         - 잘못된 토큰일 경우.
     """
+
     refresh = serializers.CharField()
 
-    default_error_message = {
-        'bad_token': ('Token is expired or invalid',)
-    }
+    default_error_message = {"bad_token": ("Token is expired or invalid",)}
 
     def validate(self, attrs):
-        self.token = attrs['refresh']
+        self.token = attrs["refresh"]
         return attrs
 
     def save(self, **kwargs):
@@ -161,7 +159,7 @@ class LogoutSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
 
         except TokenError:
-            self.fail('bad_token')
+            self.fail("bad_token")
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -170,11 +168,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
     explanation :
         - 어드민 권한으로 해당 유저의 정보를 조회할 수 있다.
     """
+
     class Meta:
         model = User
-        fields = [
-            'id', 'email', 'nickname', 'is_admin'
-        ]
+        fields = ["id", "email", "nickname", "is_admin"]
 
 
 class UserUpdateDeleteSerializer(serializers.ModelSerializer):
@@ -183,9 +180,7 @@ class UserUpdateDeleteSerializer(serializers.ModelSerializer):
     explanation :
          - 어드민 권한으로 해당 유저의 정보를 수정 및 삭제할 수 있다.
     """
+
     class Meta:
         model = User
-        fields = [
-            'id', 'nickname', 'is_admin'
-        ]
-
+        fields = ["id", "nickname", "is_admin"]
