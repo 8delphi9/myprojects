@@ -2,7 +2,6 @@ from user.views import (
     UserDetailAPIView,
     UserLoginAPIView,
     LogoutAPIView,
-    UserReadAPIView,
 )
 
 users = UserLoginAPIView.as_view({
@@ -20,11 +19,5 @@ user_detail = UserDetailAPIView.as_view(
         "get": "retrieve",
         "patch": "partial_update",
         "delete": "destroy",
-    }
-)
-
-user_update = UserReadAPIView.as_view(
-    {
-        "get": "retrieve",
     }
 )
