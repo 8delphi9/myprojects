@@ -12,7 +12,6 @@
 - [개발 조건](#-개발-조건)
 - [실행방법](#실행-방법)
 - [배포](#-배포)
-- [swagger](#swagger)  
 - [테스트 케이스](#테스트-케이스)  
 - [기술 스택](#기술-스택) 
 <br><br>
@@ -34,7 +33,7 @@
   </div> 
 
   <h2> ⌛ 개발 기간  </h2> 
- 2022/07/04  ~ 2022/07/07
+ 2022/07/04  ~ 2022/07/08
  <br><br>
   </div> 
 
@@ -92,9 +91,9 @@
 
 ### ERD
 
-사진
+<img src="https://user-images.githubusercontent.com/44389424/178172213-86a37ea0-389d-4f22-8f3d-63e8fc9d79e1.JPG"/>
 <br><br>
-</div>
+
 
 
 
@@ -127,7 +126,7 @@ python manage.py runserver
 # 도커 실행
 pip install docker
 pip install docker-compose
-docker-compose up -d
+docker-compose up -d (도커 실행 후 15초 이후에 실행시켜주세요)
 ```
 
 
@@ -138,27 +137,23 @@ docker-compose up -d
 
 docker를 이용해 프로젝트 api를 컨테이너화 하여 GCP에 배포했습니다  
 
-[API Link]()
+[API Link](http://32.58.62.114:8000/api/payhere)
 
 GCP 배포, 테스트 및 동작을 확인하였으며, 비용 등의 이유로 현재는 접속불가할 수 있습니다.
-<br><br>
 
+[API 명세서 (Swagger)](http://32.58.62.114:8000/api/swagger/)
 
-
-## swagger
-
-[API 명세서 (Swagger)]()
-
+[API 명세서 - local (Swagger)](http://127.0.0.1:8000/api/swagger/)
 <br><br>
 
 
 
 ## 테스트 케이스
 
-Pytest-Django로 구현 된 28개의 테스트 구현
+Pytest-Django로 구현 된 33개의 테스트 구현
 
-- 성공 케이스: 25개 (통과)
-- 실패 케이스: 3개 (통과)  
+- 성공 케이스: 18개 (통과)
+- 실패 케이스: 15개 (통과)  
 <br><br>
 
 
