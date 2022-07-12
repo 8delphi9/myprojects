@@ -181,17 +181,6 @@ class UserDetailAPIView(
         return self.update(request, *args, **kwargs)
 
 
-class UserReadAPIView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    lookup_url_kwarg = "user_id"
-    permission_classes = [IsOwner]
-
-    def get_queryset(self):
-        return User.objects.all()
-
-    def get_serializer_class(self):
-        return UserUpdateDeleteSerializer
-
-
 class UserCreateApiView(GenericAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -212,6 +201,7 @@ class UserCreateApiView(GenericAPIView):
             {"message": "이메일 또는 패스워드 또는 닉네임 형식을 확인해주세요."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
 
 class GenaralUserApiView(GenericAPIView):
     permission_classes = [IsOwner]

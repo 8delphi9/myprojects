@@ -11,7 +11,6 @@ from ledger.views import (
 )
 from user.token_views import MyTokenObtainPairView, ApiRefreshRefreshTokenView
 from user.views import (
-    UserAPIView,
     GenaralUserApiView,
     UserCreateApiView,
 )
@@ -26,7 +25,6 @@ from user.urls import (
     logout,
     users,
     user_detail,
-    user_update,
 )
 
 schema_view = get_schema_view(
@@ -53,7 +51,6 @@ token_patterns = [
 
 user_patterns = [
     path('<int:user_id>/', GenaralUserApiView.as_view(), name='user'),
-    path('read/test/<int:user_id>/', user_update, name='user_read'),
     path('signup/', UserCreateApiView.as_view(), name='signup'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
