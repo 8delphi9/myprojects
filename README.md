@@ -1,6 +1,6 @@
 <div align="center">
 
-  # 과제 02 - LabQ
+  # 과제 02 - Payhere
 
 </div>
 
