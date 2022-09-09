@@ -11,7 +11,6 @@ User = get_user_model()
 
 def validate_password12(password1, password2):
     """
-    author : 이승민
     :param password1: 첫 번째 비밀번호
     :param password2: 두 번째 비밀번호
     :return: password1
@@ -59,7 +58,6 @@ def validate_password12(password1, password2):
 # 유저 시리얼라이저
 class UserSerializer(serializers.ModelSerializer):
     """
-    author : 이승민
     explanation :
         - 유저의 정보를 조회하기 위한 시리얼라이저
         - 어드민전용
@@ -77,7 +75,6 @@ class UserSerializer(serializers.ModelSerializer):
 # 회원가입 시리얼라이저
 class RegisterSerializer(serializers.Serializer):
     """
-    author : 이승민
     explanation :
         - 회원가입 시리얼라이저
         - email, password1, password2, nickname의 validate 확인
@@ -126,7 +123,6 @@ class RegisterSerializer(serializers.Serializer):
 
 class LoginSerializer(serializers.Serializer):
     """
-    author : 이승민
     explanation :
         - 로그인 시리얼라이저
     """
@@ -137,7 +133,6 @@ class LoginSerializer(serializers.Serializer):
 
 class LogoutSerializer(serializers.Serializer):
     """
-    author : 이승민
     explanation :
         - blacklist를 활용
         - token을 blacklist 테이블에 저장
@@ -164,7 +159,6 @@ class LogoutSerializer(serializers.Serializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """
-    author : 이승민
     explanation :
         - 어드민 권한으로 해당 유저의 정보를 조회할 수 있다.
     """
@@ -176,7 +170,6 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class UserUpdateDeleteSerializer(serializers.ModelSerializer):
     """
-    author : 이승민
     explanation :
          - 어드민 권한으로 해당 유저의 정보를 수정 및 삭제할 수 있다.
     """

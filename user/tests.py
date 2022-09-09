@@ -9,33 +9,6 @@ from user.serializers import UserDetailSerializer
 
 # Create your tests here.
 class UserTest(APITestCase):
-    """
-    author : 이승민, 정용수
-    explanation :
-        - 회원가입 Test Case : 정용수
-            - 성공 케이스 :
-                -
-            실패 케이스 :
-                -
-        - 로그인 Test Case : 이승민
-            - 성공 케이스 2개 :
-                - 어드민 로그인
-                - 유저 로그인
-            - 실패 케이스 2개 :
-                - 어드민 로그인
-                - 유저 로그인
-        - 어드민전용 Test Case : 이승민
-            - 성공 케이스 4개 :
-                - 어드민 권한 유저 리스트 조회
-                - 어드민 권한 유저 디테일 조회
-                - 어드민 권한 유저 수정
-                - 어드민 권한 유저 삭제
-
-            - 실패 케이스 2개
-                - 인증되지 않은 사용자
-                - 유저가 없는 경우
-    """
-
 
     client = APIClient()
     headers = {}

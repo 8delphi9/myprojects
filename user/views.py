@@ -31,19 +31,6 @@ User = get_user_model()
 class UserLoginAPIView(mixins.ListModelMixin,
                        viewsets.GenericViewSet):
 
-    """
-    author : 이승민
-    로그인 : email, password, list (get)
-    param request: QueryDict
-    return: JSON (200 or 400)
-    explanation :
-        - list (get) : 어드민 권한으로 모든 유저를 조회할 수 있다.
-        - login (post) : 입력받은 email과 password를 통해서 올바른 email과 password인지 검사하고
-                         올바르다면 access, refresh 토큰을 발급한다.
-                         이때 토큰에는 유저의 id와 email이랑 is_staff 필드를 payload에 같이 삽입 후 엔코딩한다.
-    """
-
-
     def get_queryset(self):
         if self.action == "list":
             return User.objects.all()
@@ -64,13 +51,7 @@ class UserLoginAPIView(mixins.ListModelMixin,
 
     @action(detail=False, methods="post")
     def login(self, request):
-        """
-        author : 이승민
-        response : success (200), fail (400)
-        - login (post) : 입력받은 email과 password를 통해서 올바른 email과 password인지 검사하고
-                         올바르다면 access, refresh 토큰을 발급한다.
-                         이때 토큰에는 유저의 id와 email이랑 is_staff 필드를 payload에 같이 삽입 후 엔코딩한다.
-        """
+
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
@@ -96,26 +77,13 @@ class UserLoginAPIView(mixins.ListModelMixin,
 
 
 class LogoutAPIView(viewsets.GenericViewSet):
-    """
-    author : 이승민
-    로그아웃 : blacklist
-    return: JSON (200 or 400)
-    explanation :
-        - logout (post) : access_token을 blacklist 테이블에 저장을 해서 로그아웃 처리를 한다.
-    """
 
     queryset = User.objects.all()
     serializer_class = LogoutSerializer
 
     @action(detail=False, methods="post")
     def logout(self, request):
-        """
-        author : 이승민
-        로그아웃 : blacklist
-        response : success (200), fail (400)
-        explanation :
-            - logout (post) : token을 blacklist 테이블에 저장을 해서 로그아웃 처리를 한다.
-        """
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -128,19 +96,7 @@ class UserDetailAPIView(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    """
-    author : 이승민
-    어드민 : detail (get), update (patch), delete (delete)
-    param request: QueryDict
-    return: JSON
-    response :
-        - success 200
-        - fail 400, 404, 401, 403
-    explanation :
-        - detail (get) <어드민전용> : 어드민 권한으로 해당 유저를 조회할 수 있다.
-        - update (patch) <어드민전용> : 어드민 권한으로 해당 유저의 정보를 수정할 수 있다.
-        - delete (delete) <어드민전용> : 어드민 권한으로 해당 유저를 삭제할 수 있다.
-    """
+
 
     lookup_url_kwarg = "user_id"
 
@@ -162,20 +118,6 @@ class UserDetailAPIView(
         return [permission() for permission in permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
-        """
-        author : 이승민
-        어드민 : update (patch)
-        param request: QueryDict
-        return: JSON
-        response :
-            - success (200)
-            - fail (400)
-            - 유저가 없다면 (404)
-            - 권한 이슈 (403)
-            - 인증 이슈 (401)
-        explanation :
-            - update (patch) <어드민전용> : 어드민 권한으로 해당 유저의 정보를 수정할 수 있다.
-        """
         kwargs['partial'] = True
 
         return self.update(request, *args, **kwargs)
@@ -186,12 +128,7 @@ class UserCreateApiView(GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, **kwargs):
-        """
-        author: 정용수
-        회원가입: 이메일, 패스워드, 닉네임
-        :param request: QueryDict
-        :return: JSON
-        """
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
@@ -207,12 +144,7 @@ class GenaralUserApiView(GenericAPIView):
     permission_classes = [IsOwner]
 
     def get(self, request, user_id : int):
-        """
-        author: 정용수
-        회원 상세정보 조회: user_id로 상세 정보를 조회
-        :param request: Int
-        :return: JSON
-        """
+
         try:
             user = User.objects.get(id=user_id)
 
@@ -226,12 +158,7 @@ class GenaralUserApiView(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, user_id : int):
-        """
-         author: 정용수
-        회원정보 변경: user_id로 회원 정보를 찾아 email, nickname을 변경함
-        :param request: Int
-        :return: JSON
-        """
+
         try:
             user = User.objects.get(id=user_id)
 
@@ -247,12 +174,7 @@ class GenaralUserApiView(GenericAPIView):
             )
 
     def delete(self, request, user_id : int):
-        """
-         author: 정용수
-        회원탈퇴: 이메일로 회원 탈퇴를 진행함
-        :param request: Int
-        :return: JSON
-        """
+
         try:
             user = User.objects.get(id=user_id)
             user.delete()

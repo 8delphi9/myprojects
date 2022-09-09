@@ -1,4 +1,3 @@
-# author : 이승민
 # Dockerfile
 
 FROM python:3.9.0

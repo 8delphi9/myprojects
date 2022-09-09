@@ -14,22 +14,10 @@ User = get_user_model()
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    """
-    author : 이승민
-    explanation :
-         - token 커스텀한 것을 적용
-    """
     serializer_class = MyTokenObtainPairSerializer
 
 
 class ApiRefreshRefreshTokenView(GenericAPIView):
-    """
-    author : 이승민
-    explanation :
-         - token 커스텀
-         - 토큰 payload 필수데이터에 추가적인 필드 값을 삽입
-         - 만료된 refresh token은 자동으로 blacklist에 저장.
-    """
     permission_classes = ()  # 중요, 이렇게 해야 접근이 가능합니다.
     authentication_classes = ()  # 중요, 이렇게 해야 접근이 가능합니다.
 
